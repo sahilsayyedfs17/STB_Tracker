@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set-top Box Tracker - Transfer</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            margin: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #transferResult {
+            margin: 20px 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: #ddd;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Transfer Device</h1>
+        <input type="text" id="casTransferInput" placeholder="Enter CAS Number">
+        <input type="text" id="newUserInput" placeholder="Transfer To (New User)">
+        <button onclick="transferDevice()">Transfer</button>
+        <div id="transferResult"></div>
+        <a href="index.html" class="button">Back to Home</a>
+    </div>
+    <script>
+        function transferDevice() {
+            const casNumber = document.getElementById('casTransferInput').value;
+            const newUserName = document.getElementById('newUserInput').value;
+
+            fetch('http://localhost:3001/transferDevice', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ casNumber, newUserName })
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('transferResult').innerText = data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('transferResult').innerText = 'Error: ' + error.message;
+            });
+        }
+    </script>
+</body>
+</html>
