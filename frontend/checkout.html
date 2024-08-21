@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set-top Box Tracker - Check Out</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Check Out Device</h1>
+        <button onclick="scanBarcode('CAS')">Scan CAS</button>
+        <input type="text" id="casInput" placeholder="CAS Number">
+        <input type="text" id="userInput" placeholder="User Name">
+        <button onclick="checkOut()">Check Out</button>
+        <div id="result"></div>
+        <a href="index.html" class="button">Back to Home</a>
+    </div>
+    <script>
+        function checkOut() {
+            const casNumber = document.getElementById('casInput').value;
+            const userName = document.getElementById('userInput').value;
+
+            fetch('http://localhost:3001/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ casNumber, userName })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.text();
+            })
+            .then(data => {
+                document.getElementById('result').innerText = data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result').innerText = 'Error: ' + error.message;
+            });
+        }
+
+        function scanBarcode(fieldId) {
+            // Initialize the QR code scanner
+            const html5QrcodeScanner = new Html5QrcodeScanner("scanner", { fps: 10, qrbox: 250 });
+
+            html5QrcodeScanner.render((decodedText, decodedResult) => {
+                // Set the value of the input field based on the scanned text
+                document.getElementById(fieldId.toLowerCase() + 'Input').value = decodedText;
+                html5QrcodeScanner.clear(); // Stop scanning
+            });
+        }
+    </script>
+</body>
+</html>
